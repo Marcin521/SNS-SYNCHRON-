@@ -8,8 +8,8 @@
 #define ENA_ON 	  PORTG |= (1<<3)
 #define ENA_OFF   PORTG &= ~(1<<3)
 
-#define M1_Prawo   PORTA |= (1<<4); PORTA &= ~(1<<3) //zamieniłem M1_Lewo na M1_Prawo
-#define M1_Lewo  PORTA |= (1<<3); PORTA &= ~(1<<4) //zamieniłem M1_Prawo na M1_Lewo
+#define M1_Prawo   PORTA |= (1<<4); PORTA &= ~(1<<3) //zamieni�em M1_Lewo na M1_Prawo
+#define M1_Lewo  PORTA |= (1<<3); PORTA &= ~(1<<4) //zamieni�em M1_Prawo na M1_Lewo
 #define M1_Stop   PORTA &= ~0b00011000
 
 #define M2_Lewo   PORTA |= (1<<6); PORTA &= ~(1<<5)
@@ -22,10 +22,10 @@ volatile uint8_t odebrano;
 ISR (USART0_RX_vect)
 {
      uint8_t tmp=0;
-     while (UCSR0A & (1<<RXC0))    // odczytaj ostatni znak (jesli więcej znaków w buforze to go opróżnij)
+     while (UCSR0A & (1<<RXC0))    // odczytaj ostatni znak (jesli wi�cej znak�w w buforze to go opr�nij)
 
     	 tmp = UDR0;
-     if (!(UCSR0A & 0b00011100))    // jesli nie ma błędu do dana poprawna
+     if (!(UCSR0A & 0b00011100))    // jesli nie ma b��du do dana poprawna
      {
          odebrano=tmp;
          //PORTC ^= 128;
