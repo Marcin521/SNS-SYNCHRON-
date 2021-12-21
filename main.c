@@ -1,4 +1,4 @@
-#define F_CPU 16000000UL
+ï»¿#define F_CPU 16000000UL
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -8,8 +8,8 @@
 #define ENA_ON 	  PORTG |= (1<<3)
 #define ENA_OFF   PORTG &= ~(1<<3)
 
-#define M1_Prawo   PORTA |= (1<<4); PORTA &= ~(1<<3) //zamieni³em M1_Lewo na M1_Prawo
-#define M1_Lewo  PORTA |= (1<<3); PORTA &= ~(1<<4) //zamieni³em M1_Prawo na M1_Lewo
+#define M1_Prawo   PORTA |= (1<<4); PORTA &= ~(1<<3) //zamieniï¿½em M1_Lewo na M1_Prawo
+#define M1_Lewo  PORTA |= (1<<3); PORTA &= ~(1<<4) //zamieniï¿½em M1_Prawo na M1_Lewo
 #define M1_Stop   PORTA &= ~0b00011000
 
 #define M2_Lewo   PORTA |= (1<<6); PORTA &= ~(1<<5)
@@ -22,10 +22,10 @@ volatile uint8_t odebrano;
 ISR (USART0_RX_vect)
 {
      uint8_t tmp=0;
-     while (UCSR0A & (1<<RXC0))    // odczytaj ostatni znak (jesli wiêcej znaków w buforze to go opró¿nij)
+     while (UCSR0A & (1<<RXC0))    // odczytaj ostatni znak (jesli wiï¿½cej znakï¿½w w buforze to go oprï¿½nij)
 
     	 tmp = UDR0;
-     if (!(UCSR0A & 0b00011100))    // jesli nie ma b³êdu do dana poprawna
+     if (!(UCSR0A & 0b00011100))    // jesli nie ma bï¿½ï¿½du do dana poprawna
      {
          odebrano=tmp;
          //PORTC ^= 128;
@@ -117,6 +117,7 @@ int main(void)
     	 			PORTC |= 128;
     		 	 	_delay_ms(500);
     		 	 	PORTC &= ~128;
+    		        break;
 
     	 		case 1: //lewo
 
@@ -125,14 +126,18 @@ int main(void)
     	            OCR3B = 1000;
     	            OCR3A = 5000;
     	            _delay_ms(1000);
+    	            break;
+
 
     	        case 2: //prawo
 
     	        	M1_Stop;
     	            M2_Lewo;
     	            OCR3B = 700;
-    	            OCR3A = 500;
+    	            OCR3A = 700;
     	            _delay_ms(1000);
+    	            break;
+
 
     	        case 3: //prawo
 
@@ -141,11 +146,15 @@ int main(void)
     	            OCR3B = 700;
     	        	OCR3A = 500;
     	            _delay_ms(1000);
+    	            break;
+
 
     	        case 4: //zatrzymanie
     	 			M1_Stop;
     	            M2_Stop;
     	            _delay_ms(1000);
+    	            break;
+
     	 			}
      }
 }
