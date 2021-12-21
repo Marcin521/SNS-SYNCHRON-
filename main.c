@@ -119,17 +119,23 @@ int main(void)
     		 	 	PORTC &= ~128;
     		        break;
 
-    	 		case 1: //lewo
+    	 		case 1: //
+
+    	 			/*M1_Lewo;
+    	            M1_Prawo;
+    	            OCR3B = 5000;//bylo 1000
+    	            OCR3A = 5000;
+    	            _delay_ms(1000);*/
 
     	 			M1_Lewo;
-    	            M1_Prawo;
-    	            OCR3B = 1000;
-    	            OCR3A = 5000;
-    	            _delay_ms(1000);
+    	 			M2_Lewo;
+    	 			OCR3B = 700;
+    	 			OCR3A = 700;
+
     	            break;
 
 
-    	        case 2: //prawo
+    	        case 2: //lewo
 
     	        	M1_Stop;
     	            M2_Lewo;
@@ -144,7 +150,7 @@ int main(void)
     	        	M1_Prawo;
     	            M2_Stop;
     	            OCR3B = 700;
-    	        	OCR3A = 500;
+    	        	OCR3A = 700;
     	            _delay_ms(1000);
     	            break;
 
