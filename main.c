@@ -83,39 +83,39 @@ int main(void)
     	 			OCR3B = 700;
     	 			OCR3A = 700;
 
-    	            break;
+    	          	break;
 
 
-    	        case 2: //lewo
+    	        	case 2: //lewo
 
-    	        	M1_Stop;
-    	            M2_Lewo;
-    	            OCR3B = 700;
-    	            OCR3A = 700;
-    	            _delay_ms(1000);
+    	        		M1_Stop;
+    	            		M2_Lewo;
+    	            		OCR3B = 700;
+    	            		OCR3A = 700;
+    	            		_delay_ms(1000);
 
-    	            break;
-
-
-    	        case 3: //prawo
-
-    	        	M1_Lewo; //prawdopodobnie tu byl blad dlatego platforma nie skrencala
-    	            M2_Stop;
-    	            OCR3B = 700;
-    	        	OCR3A = 700;
-    	            _delay_ms(1000);
-
-    	            break;
+		                break;
 
 
-    	        case 4: //zatrzymanie
+    	        	case 3: //prawo
 
-    	        	M1_Stop;
-    	            M2_Stop;
-    	            _delay_ms(1000);
+	    	        	M1_Lewo; //prawdopodobnie tu byl blad dlatego platforma nie skrencala
+    		            	M2_Stop;
+    	        	    	OCR3B = 700;
+    	        		OCR3A = 700;
+    	            		_delay_ms(1000);
 
-    	            break;
+    	           		 break;
 
-    	 			}
+
+    	        	case 4: //zatrzymanie
+
+    	        		M1_Stop;
+    	          		M2_Stop;
+    	       		     	_delay_ms(1000);
+
+    	            		break;
+
+    	 	}
      }
 }
