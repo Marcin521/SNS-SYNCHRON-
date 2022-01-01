@@ -28,7 +28,6 @@ ISR (USART0_RX_vect)
      if (!(UCSR0A & 0b00011100))    // jesli nie ma b��du do dana poprawna
      {
          odebrano=tmp;
-         //PORTC ^= 128;
      }
 }
 
@@ -67,49 +66,6 @@ int main(void)
      while(1)
      {
 
-    	/* if (odebrano==0)//do przodu
-    	          {
-    		 	 	 PORTC |= 128;
-    		 	 	 _delay_ms(500);
-    		 	 	 PORTC &= ~128;
-
-    		 	 	 M1_Lewo;
-    	             M1_Prawo;
-    	             OCR3B = 700;
-    	             OCR3A = 5000;
-    	             _delay_ms(1000);
-
-    	          }
-
-    	          if (odebrano==1)//lewo
-    	          {
-    	              M1_Lewo;
-    	              M2_Stop;
-    	              OCR3B = 500;
-    	              OCR3A = 500;
-    	              _delay_ms(1000);
-    	          }
-
-    	         if (odebrano==2)//prawo
-    	          {
-    	          */
-    	        	 /*PORTC |= 128;
-    	        	 _delay_ms(500);
-    	        	 PORTC &= ~128;
-    	        	 _delay_ms(500);
-    	        	 PORTC |= 128;
-    	        	 _delay_ms(500);
-    	        	 PORTC &= ~128;
-    	        	 _delay_ms(500);
-		 */
-    	 /*
-    	              M1_Stop;
-    	              M2_Lewo;
-    	              OCR3B = 500;
-    	              OCR3A = 500;
-    	              _delay_ms(1000);
-    	          }
-    	  */
     	 switch(odebrano)
     	 	{
     	 		case 0: //bling led
@@ -117,15 +73,10 @@ int main(void)
     	 			PORTC |= 128;
     		 	 	_delay_ms(500);
     		 	 	PORTC &= ~128;
+
     		        break;
 
     	 		case 1: //
-
-    	 			/*M1_Lewo;
-    	            M1_Prawo;
-    	            OCR3B = 5000;//bylo 1000
-    	            OCR3A = 5000;
-    	            _delay_ms(1000);*/
 
     	 			M1_Lewo;
     	 			M2_Lewo;
@@ -142,23 +93,27 @@ int main(void)
     	            OCR3B = 700;
     	            OCR3A = 700;
     	            _delay_ms(1000);
+
     	            break;
 
 
     	        case 3: //prawo
 
-    	        	M1_Prawo;
+    	        	M1_Lewo; //prawdopodobnie tu byl blad dlatego platforma nie skrencala
     	            M2_Stop;
     	            OCR3B = 700;
     	        	OCR3A = 700;
     	            _delay_ms(1000);
+
     	            break;
 
 
     	        case 4: //zatrzymanie
-    	 			M1_Stop;
+
+    	        	M1_Stop;
     	            M2_Stop;
     	            _delay_ms(1000);
+
     	            break;
 
     	 			}
