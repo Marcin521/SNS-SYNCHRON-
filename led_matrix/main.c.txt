@@ -1,0 +1,48 @@
+/*
+ * Pierwszy.c
+ *
+ * Created: 20.10.2021 11:33:27
+ * Author : marcin
+ */
+#define F_CPU 16000000UL
+#include <avr/io.h>
+#include <util/delay.h>
+
+	#define W1_ON PORTA &=~(1<<4) //zaświecenie cyfry1 na PC0
+	#define W1_OFF PORTA |=(1<<4) //zgaszenie cyfry1 na PC0
+
+
+char a_p[]={
+		1, 2, 8, 16, 32, 64, 128};
+
+char a_n[][8]={
+		{0x00,0x18,0x24,0x42,0x70,0x42,0x42,0x00},
+		{0x00,0x02,0x0c,0x1c,0x38,0x70,0x70,0x80},
+		{0x00,0x18,0x24,0x42,0x70,0x42,0x42,0x00}
+
+};
+
+
+int main(void){
+
+    DDRA |= (1<<PA1); //ustawiamy na wyjsice
+    PORTA |=(1<<PA1);//stan wysoki wyjście PA0
+
+
+    DDRC |=(1<<PC6); //ustawiamy na wyjsice
+    PORTC &= ~(1<<PC6);//stan niski wyjście PC7
+
+
+
+    DDRA |= (1<<PA2); //ustawiamy na wyjsice
+    PORTA |=(1<<PA2);//stan wysoki wyjście PA0
+
+    DDRC |=(1<<PC5); //ustawiamy na wyjsice
+    PORTC &= ~(1<<PC5);//stan niski wyjście PC7
+
+
+
+}
+
+
+// otrymujemy kwadrat o bokach 2x2
