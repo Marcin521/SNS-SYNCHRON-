@@ -1,0 +1,117 @@
+#define F_CPU 16000000UL
+
+#include <avr/interrupt.h>
+#include <avr/io.h>
+#include <util/delay.h>
+
+volatile int status = 0;
+
+ISR(INT0_vect)
+{
+	status++;
+
+	if(status > 2)
+	status = 0;
+}
+
+void init()
+{
+	DDRA = 0xFF;    //PORTA wyjsice
+	DDRC = 0xFF;    //PORTC wyjscie
+	DDRD = 0x00;
+	PORTD = 0xFF;   //odp na PORTD
+
+//def przerwanie
+	GICR |= (1<<INT0);
+	MCUCR |= (1<<ISC01)|(1<<ISC00);
+
+	// wł przerwania
+	sei();
+}
+
+void wyswietlacz_matrix() //poruszanie
+{
+	// Possible a better solution
+	// 8*8 Matrix display can be ordered like a coordinate system (x/y)
+	for (unsigned char i=20; i >0; i--)
+	{
+		for(unsigned char x=8; x <8; x += 2)
+		{
+			// dol
+			PORTC = ~(1<<x);
+
+			for (unsigned char y=0; y < 8; y++)
+			{
+				PORTA = (1<<y);
+				_delay_ms(100);
+			}
+
+			PORTC = (1<<x);
+
+			// gora
+			PORTC = ~(1<<(x + 1));
+
+			for (unsigned char y=0; y < 8; y++)
+			{
+				PORTA = (1<<y);
+				_delay_ms(100);
+			}
+
+			PORTC = (1<<(x + 1));
+		}
+	}
+}
+
+void matrix_reverse()
+{
+
+	for (unsigned char i=0; i < 20; i++)
+	{
+		for(unsigned char x=0; x < 8; x += 2)
+		{
+			// Down
+			PORTC = ~(1<<(7 - x));
+
+			for (unsigned char y=0; y < 8; y++)
+			{
+				PORTA = (1<<(7 - y));
+				_delay_ms(200);
+			}
+
+			PORTC = (1<<(7 - x));
+
+			// Up
+			PORTC = ~(1<<(6 - x));
+
+			for (unsigned char y=0; y < 8; y++)
+			{
+				PORTA = (1<<(6 - y));
+				_delay_ms(200);
+			}
+
+			PORTC = (1<<(6 - x));
+		}
+	}
+}
+
+int main(void)
+{
+	init();
+
+	while(1)
+	{
+		switch(status){
+			case 0:
+				PORTC = 0x00;
+				PORTA = 0x00;
+			break;
+
+			case 1:
+				wyswietlacz_matrix();
+			break;
+			case 2:
+				matrix_reverse();
+			break;
+		}
+	}
+}
