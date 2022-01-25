@@ -1,0 +1,80 @@
+/*
+ * Pierwszy.c
+ *
+ * Created: 20.10.2021 11:33:27
+ * Author : studenci
+ */
+#define F_CPU 16000000UL
+#include <avr/io.h>
+#include <util/delay.h>
+
+#define LED_PB0_ON  PORTB &= ~(1<<0)
+#define LED_PB0_OFF PORTB |= (1<<0)
+#define LED_PB7_ON  PORTB &= ~(1<<7)
+#define LED_PB7_OFF PORTB |= (1<<7)
+
+#define P_F0    !(PIND&(1<<0))
+#define	P_F1    !(PIND&(1<<1))
+#define P_F2    !(PIND&(1<<2))
+#define P_F3    !(PIND&(1<<3))
+
+unsigned int i;
+unsigned int s;
+unsigned int opoznienie;
+unsigned char Tab[16] = {0b11111110,
+						0b11111101,
+						0b11111011,
+						0b11110111,
+						0b11101111,
+						0b11011111,
+						0b10111111,
+						0b01111111,
+						0b01111111,
+						0b10111111,
+						0b11011111,
+						0b11101111,
+						0b11110111,
+						0b11111011,
+						0b11111101,
+						0b11111110,
+						};
+
+int spead;
+int a;
+int start;
+int status;
+
+int main(void)
+{
+
+	DDRB=0b11111111;
+	PORTB=0b11111111;
+	DDRD=0b11110000;
+	PORTD=0b11111111;
+
+	start=0;
+	status=0;
+
+	while(1)
+	{
+
+		if(P_F0) status=1;
+
+		if(status==1)
+		{
+			PORTB = Tab[i];
+			_delay_ms(200);
+			if (i == sizeof(Tab)) i = 0;
+			i++;
+
+			if(P_F0) status=0;
+		}
+
+
+	}
+
+}
+
+
+
+
