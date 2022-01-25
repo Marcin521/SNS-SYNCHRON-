@@ -1,0 +1,92 @@
+/*
+ * main.c
+ *
+ *  Created on: 7 sty 2022
+ *      Author: Marcin Kondoł
+ */
+
+
+
+#define F_CPU 16000000UL
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+
+void funkcja(void){
+	//#define LED_PD7_blink PORTD ^=(1<<7) //naprzemienna zmiana świecenia diody
+
+	//#define P_F0 !(PIND&(1<<7))	//zdefiniowanie przycisku klawiatury
+	//#define P_F1 !(PIND&(1<<6))
+	//#define P_F2 !(PIND&(1<<5))
+	//#define P_F3 !(PIND&(1<<4))
+
+	#define W1_ON PORTD &=~(1<<4) //zaświecenie cyfry1 na PC0
+	#define W1_OFF PORTD |=(1<<4) //zgaszenie cyfry1 na PC0
+	#define W2_ON PORTD &=~(1<<5)
+	#define W2_OFF PORTD |=(1<<5)
+	#define W3_ON PORTD &=~(1<<6)
+	#define W3_OFF PORTD |=(1<<6)
+	#define W4_ON PORTD &=~(1<<7)
+	#define W4_OFF PORTD |=(1<<7)
+}
+char cyfry[10]={0b00000011,
+				0b00000011,
+				0b00000011,
+				0b00000011,
+				0b00000011,
+				0b00000011,
+				0b00000011,
+				0b00000011,
+				0b00000011,
+                0b00000011,
+				};
+
+unsigned int opoznienie=0, ii=0;
+//unsigned char Tab[8]={0b11000000, 0b11111101,};
+int jeden, dwa, wynik;
+int i=0;
+
+//GICR |= (1<<INT0) | (1<<INT1);
+
+ISR(INT0_vect){
+
+}
+
+int main(void)
+{
+	sei();
+
+	DDRB = 0b11111111; //do rejestru B same jedynki
+	PORTB= 0b11111111; //rejestr wyjściowy, przypisanie jedynek
+	DDRD = 0b11110000;	//odpowiada za klawiature, pamięć. Do zer tylko klawiatury a  do jedynek urządzenia do sterowania
+	PORTD= 0b11111111; //odpowiada za klawiature, konkretny przycisk
+	//int aa=0b11111111;
+
+	funkcja();
+
+	while (1)
+    {
+
+		PORTB= cyfry[0];
+		W1_ON;
+		_delay_ms(50);
+		W1_OFF;
+
+		PORTB= cyfry[1];
+		W2_ON;
+		_delay_ms(50);
+		W2_OFF;
+
+		PORTB= cyfry[2];
+		W3_ON;
+		_delay_ms(5);
+		W3_OFF;
+
+		PORTB= cyfry[3];
+		W4_ON;
+		_delay_ms(5);
+		W4_OFF;
+
+    }
+}
+
