@@ -10,9 +10,9 @@
 #include <avr/interrupt.h>
 
 
-	#define P_F0    !(PIND&(1<<0))
-	#define P_F1    !(PIND&(1<<3))
-	#define P_F2    !(PIND&(1<<6))
+	#define P_F0    !(PIND&(1<<0))//przycisk on/of
+	#define P_F1    !(PIND&(1<<3))//wolniej
+	#define P_F2    !(PIND&(1<<6))//szybciej
 
 
 uint8_t l =0;
@@ -51,14 +51,14 @@ void init()
 	PORTD=0b11111111;
 
 //def przerwanie
-//	GICR |= (1<<INT0);
-	//MCUCR |= (1<<ISC01)|(1<<ISC00);
+	GICR |= (1<<INT0);
+	MCUCR |= (1<<ISC01)|(1<<ISC00);
 
 	// wł przerwania
 //	sei();
 }
 
-void _delay_ms_var(uint16_t a)
+void opoznienie(uint16_t a)
 {
 	do
 	{
@@ -75,6 +75,7 @@ int main(void){
 	while(1){
 
 		predkosc=1;
+
 		LOOP: if(P_F0) status=1;
 
 		if(1==status)
@@ -98,7 +99,8 @@ int main(void){
 
 			                        if(P_F2) predkosc--;
 
-			                        _delay_ms_var(predkosc);
+
+			                        opoznienie(predkosc);
 
 			                      // _delay_ms(2);
 
@@ -108,15 +110,9 @@ int main(void){
 						}
 				}
 		}
-
-
-
-
-
-
 	}
-
-
 }
 
+// opuźnena
+//wyłączanie
 
