@@ -92,16 +92,14 @@ int main(void){
 
 
 		switch(status){
-		  case 0:
-			  PORTC = 0x00;   // for PORTs, PINs, DDRs use HEX or BINARY notation
-		      PORTA = 0x00;   // cause of better readiness
-		      break;
 		  case 1:
-			  PORTC = 0xFF;   // for PORTs, PINs, DDRs use HEX or BINARY notation
-			  PORTA = 0x00;
+			  animacja();
+			  //PORTC = 0xFF;   // for PORTs, PINs, DDRs use HEX or BINARY notation
+			  //PORTA = 0x00;
 		      break;
 		  case 2:
-			  animacja();
+			  PORTC = 0x00;   // for PORTs, PINs, DDRs use HEX or BINARY notation
+			  PORTA = 0x00;   // cause of better readiness
 			  break;
 		}
 	}
