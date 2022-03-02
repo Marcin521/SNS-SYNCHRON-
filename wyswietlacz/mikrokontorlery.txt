@@ -1,0 +1,46 @@
+// 2.03.2022
+//autor Marcin Kondoł
+
+#include  <avr/io.h>
+#include  <until/delay.h>
+#include  <avr/interrupt.h>
+
+#define LCD_RESET 0x38
+#define LCD_ON	  0x0E
+#define LCD_CLR   0x01
+
+#define RS_ON PORTC  |=	(1<<1)
+#define RS_OFF PORTC &= ~(1<<1)
+#define EN_ON PORTC  |=	(1<<0)
+#define EN_OFF PORTC &=	~(1<<0)
+
+#define LED_OFF PORTD |= (1<<6)
+#define LED_ON PORTC   &= ~(1<<6)
+
+unsigned char Lit_a[8] = {0x00, 0x0E, 0x01, 0x0F, 0x11, 0x0F, 0x02, 0x01};
+unsigned char Piatek[]={'P','i','a', 't', 'e', 'k'};
+
+unsigned int i;
+
+ISR(INT0 vect){
+	LED_ON;
+}
+
+ISR(INT1 vect){
+	LED_OFF;
+}
+int main(){
+	
+	DDRB=0xFF;
+	PORTB=0xFF;
+	DDRC=0xFF; 
+	PORTC=0xFF; 
+	DDRD=0xF0; 
+	PORTD=0xFF; 
+	
+	GICR|= 1<<INT0 | 1<<INT1; 
+	MCUCR|= 1<<ISC11 | 1<<ISC01 | 1<<ISC10 | 1<<ISCO0; 
+	
+	sei(); 
+	
+}
