@@ -1,6 +1,9 @@
 // 2.03.2022
 //autor: Marcin Kondoł
 
+#define F_CPU 16000000UL
+
+
 #include  <avr/io.h>
 #include <util/delay.h>
 #include  <avr/interrupt.h>
@@ -77,22 +80,22 @@ int main(){
 
 	while(1)
 	{
-		RS_OFF;
-		EN_ON;
-		PORTB=0x40;
-		EN_OFF;
-		_delay_ms(15);
+		//RS_OFF;
+		//EN_ON;
+		//PORTB=0x40;
+		//EN_OFF;
+		//_delay_ms(15);
 
-		RS_ON;
+		//RS_ON;
 
-		for(int indeks=0; indeks<8; indeks++)
-		{
-			EN_ON;
-			PORTB = Lit_a[indeks];
-			//PortB=0x41;
-			EN_OFF;
-			_delay_ms(15);
-		}
+//		for(int indeks=0; indeks<8; indeks++)
+//		{
+//			EN_ON;
+//			PORTB = Lit_a[indeks];
+//			//PortB=0x41;
+//			EN_OFF;
+//			_delay_ms(15);
+//		}
 
 		RS_OFF;
 		EN_ON;
@@ -104,13 +107,24 @@ int main(){
 
 		RS_ON;
 		EN_ON;
-		PORTB='A';
+		PORTB='*';
 		//PORTB=0x41;
 		EN_OFF;
 		_delay_ms(15);
 
 		EN_ON;
-		PORTB='N';
+		PORTB='P';
+		//PORTB=0x41;
+		EN_OFF;
+		_delay_ms(15);
+
+		EN_ON;
+		PORTB='I';
+		//PORTB=0x41;
+		EN_OFF;
+
+		EN_ON;
+		PORTB='W';
 		//PORTB=0x41;
 		EN_OFF;
 		_delay_ms(15);
@@ -120,6 +134,8 @@ int main(){
 		//PORTB=0x41;
 		EN_OFF;
 		_delay_ms(15);
+
+
 
 //wysylanie komendy sterujacej (adres kursora)
 // poz 0 druga linia
