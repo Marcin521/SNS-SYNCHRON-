@@ -1,0 +1,136 @@
+// 2.03.2022
+//autor: Marcin Kondoł
+
+#define F_CPU 16000000UL
+
+
+#include  <avr/io.h>
+#include <util/delay.h>
+#include  <avr/interrupt.h>
+
+//definicje
+
+#define LCD_RESET 0x38
+#define LCD_ON	  0x0E
+#define LCD_CLR   0x01
+
+#define RS_ON PORTC  |=	(1<<1)
+#define RS_OFF PORTC &= ~(1<<1)
+#define EN_ON PORTC  |=	(1<<0)
+#define EN_OFF PORTC &=	~(1<<0)
+
+#define LED_OFF PORTD |= (1<<6)
+#define LED_ON PORTC   &= ~(1<<6)
+
+unsigned char Lit_a[8] = {'S', 'L', 'A', 'V', 'A'};
+
+//wystapi w nastepnym kroku
+
+unsigned char Lit_b[8]= {'U', 'K', 'R', 'A', 'I', 'N', 'I'};
+
+unsigned char Piatek[]={'P','i','a', 't', 'e', 'k'};
+
+unsigned int i;
+
+//definicje przerwan
+
+ISR(INT0_vect){
+	LED_ON;
+}
+
+ISR(INT1_vect){
+	LED_OFF;
+}
+
+//funkcja glowna
+
+int main(){
+
+//inicjalizacja przerwan
+
+	DDRB=0xFF;
+	PORTB=0xFF;
+	DDRC=0xFF;
+	PORTC=0xFF;
+	DDRD=0xF0;
+	PORTD=0xFF;
+
+	GICR|= 1<<INT0 | 1<<INT1;
+	MCUCR|= (1<<ISC11) | (1<<ISC01) | (1<<ISC10) | (1<<ISC00);
+
+	sei();
+
+	_delay_ms(20);
+	RS_OFF;
+
+	EN_ON;
+	PORTB=LCD_RESET;
+
+	EN_OFF;
+	_delay_ms(5);
+	EN_ON;
+	_delay_ms(1);
+	EN_OFF;
+	_delay_ms(1);
+	EN_ON;
+	_delay_ms(1);
+	//EN_OFF;
+
+//zlacze wyswietlacza
+
+	PORTB=LCD_ON;
+	EN_OFF;
+	_delay_ms(5);
+
+	while(1)
+	{
+		RS_OFF;
+		EN_ON;
+		//PORTB=0x40;
+		EN_OFF;
+		_delay_ms(15);
+
+		RS_ON;
+
+		for(int indeks=0; indeks<8; indeks++)
+		{
+			EN_ON;
+			PORTB = Lit_a[indeks];
+			//PortB=0x41;
+			EN_OFF;
+			_delay_ms(15);
+		}
+
+		RS_OFF;
+		EN_ON;
+		PORTB=0x02; //kursora na zerowej pozycji
+		_delay_ms(15);
+
+//Wyswietlanie znaku
+//poz kursora zero, pierwsza linia wyswietlacza
+
+
+
+
+//wysylanie komendy sterujacej (adres kursora)
+// poz 0 druga linia
+
+
+		for(int indeks=0; indeks<8; indeks++)
+			{
+				EN_ON;
+				PORTB = Lit_b[indeks];
+				//PortB=0x41;
+				EN_OFF;
+				_delay_ms(15);
+			}
+
+		RS_OFF;
+		EN_ON;
+		PORTB=0xC0;
+		EN_OFF;
+		_delay_ms(15);
+
+	}
+
+}
