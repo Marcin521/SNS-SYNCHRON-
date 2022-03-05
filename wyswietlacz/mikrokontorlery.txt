@@ -80,13 +80,13 @@ int main(){
 
 	while(1)
 	{
-		//RS_OFF;
-		//EN_ON;
+		RS_OFF;
+		EN_ON;
 		//PORTB=0x40;
-		//EN_OFF;
-		//_delay_ms(15);
+		EN_OFF;
+		_delay_ms(15);
 
-		//RS_ON;
+		RS_ON;
 
 //		for(int indeks=0; indeks<8; indeks++)
 //		{
@@ -140,19 +140,19 @@ int main(){
 //wysylanie komendy sterujacej (adres kursora)
 // poz 0 druga linia
 
-	/*
+
 		RS_OFF;
 		EN_ON;
 		PORTB=0xC8;
 		EN_OFF;
-		_delay_ms(15)
+		_delay_ms(15);
 
-		RS_0N;
+		RS_ON;
 		EN_ON;
-		PORTB=0x44;
+		PORTB=0x44; //D z tablicy
 		EN_OFF;
 		_delay_ms(15);
-	*/
+
 
 	}
 
