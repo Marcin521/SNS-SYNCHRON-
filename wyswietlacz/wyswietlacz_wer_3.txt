@@ -25,11 +25,13 @@
 #define LED2_OFF PORTC |= (1<<6)
 #define LED2_ON PORTC   &= ~(1<<6)
 
-unsigned char Lit_a[5] = {'N', 'A', 'P', 'I', 'S'};
+volatile status = 0;
+
+unsigned char Lit_a[] = {'M', 'A', 'R', 'C', 'I', 'N'};
 
 //wystapi w nastepnym kroku
 
-unsigned char Lit_b[]= {'T', 'E', 'S', 'T', 'O', 'W', 'Y'};
+unsigned char Lit_b[]= {'K', 'O', 'N', 'D', 'O', 'Ł'};
 
 unsigned char Piatek[]={'P','i','a', 't', 'e', 'k'};
 
@@ -38,16 +40,21 @@ unsigned int i;
 //definicje przerwan
 
 ISR(INT0_vect){
+	status=1;
+
 	LED_ON;
 	LED2_OFF;
 }
 
 ISR(INT1_vect){
+	status=0;
 	LED2_ON;
 	LED_OFF;
 }
 
 //funkcja glowna
+
+int animacja();
 
 int main(){
 
@@ -56,7 +63,7 @@ int main(){
 	DDRB=0xFF;
 	PORTB=0xFF;
 	DDRC=0xFF;
-	PORTC=0x00;
+	PORTC=0xFF;
 	DDRD=0xF0;
 	PORTD=0xFF;
 
@@ -95,29 +102,59 @@ int main(){
 		//EN_OFF;
 		//_delay_ms(15);
 
-		RS_OFF;
-		EN_ON;
-		PORTB=0x02; //kursora na zerowej pozycji
-		EN_OFF;
-		_delay_ms(15);
-
-		RS_ON;
-
-		for(int indeks=0; indeks<5; indeks++)
+		if(!(PIND&(1<<0)))
 		{
+			status=1;
+			animacja();
+		}
+
+		switch(status)
+		{
+		case 0:
+			//LED2_ON;
+			RS_OFF;
 			EN_ON;
-			PORTB = Lit_a[indeks];
-			//PortB=0x41;
+			PORTB=0x01; //czyszcznie ekranu
 			EN_OFF;
 			_delay_ms(15);
 
+			break;
+
+		case 1:
+			animacja();
+			break;
+
 		}
 
-		RS_OFF;
+	}
+}
+
+animacja()
+{
+
+	RS_OFF;
+	EN_ON;
+	PORTB=0x02; //kursora na zerowej pozycji
+	EN_OFF;
+	_delay_ms(15);
+
+	RS_ON;
+
+	for(int indeks=0; indeks<6; indeks++)
+	{
 		EN_ON;
-		PORTB=0xC0; //kursora na zerowej pozycji
+		PORTB = Lit_a[indeks];
+		//PortB=0x41;
 		EN_OFF;
 		_delay_ms(15);
+
+	}
+
+	RS_OFF;
+	EN_ON;
+	PORTB=0xC0; //kursora na zerowej pozycji
+	EN_OFF;
+	_delay_ms(15);
 
 //Wyswietlanie znaku
 //poz kursora zero, pierwsza linia wyswietlacza
@@ -128,21 +165,20 @@ int main(){
 //wysylanie komendy sterujacej (adres kursora)
 // poz 0 druga linia
 
-		RS_ON;
+	RS_ON;
 
-		for(int indeks=0; indeks<7; indeks++)
-			{
+	for(int indeks=0; indeks<6; indeks++)
+		{
 
-				EN_ON;
-				PORTB = Lit_b[indeks];
-				//PortB=0x41;
-				EN_OFF;
-				_delay_ms(15);
-			}
+			EN_ON;
+			PORTB = Lit_b[indeks];
+			//PortB=0x41;
+			EN_OFF;
+			_delay_ms(15);
+		}
 
 
-		while(1);
-
-	}
+	//while(1);
 
 }
+
