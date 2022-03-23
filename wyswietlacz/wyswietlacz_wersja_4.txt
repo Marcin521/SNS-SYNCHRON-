@@ -1,3 +1,4 @@
+
 // 2.03.2022
 //autor: Marcin Kondoł
 
@@ -33,8 +34,8 @@ unsigned char Lit_a[] = {'S', 'N', 'S'};
 
 unsigned char Lit_b[]= {'S', 'Y', 'N', 'C', 'H', 'R','O','N'};
 
-//unsigned int L[]={0x10,0x10,0x12,0x14,0x18,0x10,0xF};
-unsigned int L[]={0xF,0x10,0x18,0x14,0x12,0x10,0x10};
+unsigned int L[]={0x10,0x10,0x12,0x14,0x18,0x10,0xF};
+//unsigned int L[]={0xF,0x10,0x18,0x14,0x12,0x10,0x10};
 
 unsigned int i;
 
@@ -71,17 +72,30 @@ void przes(int ile)
 
 void zdefiniuj_znak (unsigned char numer, unsigned char *Tablica)
 {
-    unsigned char i;
-    if(numer<8)
-    {
-     DDRB = (0x40 + (numer*8));  /* Command 0x40 and onwards forces
-                                       the device to point CGRAM address */
-       for(i=0;i<8;i++)
-       {
-    	   PORTB = Tablica[i];
-       }
+	unsigned char i;
+	if(numer<8)
+	{
+		/* Command 0x40 and onwards forces*/
+		EN_ON;
+		PORTB = (0x40 + (numer*8));
+		EN_OFF;
+		_delay_ms (15);                                     /*  the device to point CGRAM address */
 
-    }
+
+		for(i=0;i<8;i++)
+		{
+			EN_ON;
+			PORTB = Tablica[i];
+			EN_OFF;
+			_delay_ms (15);
+		}
+
+	}
+}
+
+void init()
+{
+
 }
 
 int main(){
@@ -102,10 +116,8 @@ int main(){
 
 	_delay_ms(20);
 	RS_OFF;
-
 	EN_ON;
 	PORTB=LCD_RESET;
-
 	EN_OFF;
 	_delay_ms(5);
 	EN_ON;
@@ -121,79 +133,68 @@ int main(){
 	PORTB=LCD_ON;
 	EN_OFF;
 	_delay_ms(5);
+	EN_ON;
+	_delay_ms(1);
+	EN_OFF;
+	_delay_ms(5);
+
+
 
 	while(1)
 	{
-	RS_OFF;
-	EN_ON;
-	PORTB=0x02; //kursora na zerowej pozycji
-	EN_OFF;
-	_delay_ms(15);
-
-	RS_ON;
-
-	przes(6);//wysrodkowuje przez dodanie przerwy
-
-//	DDRB =0x40; //zmien na DDRC
-
-	EN_ON;
-	zdefiniuj_znak(1, L);
-
-	EN_OFF;
-	_delay_ms(15);
-
-
-	RS_OFF;
-	EN_ON;
-	PORTB=0x02; //kursora na zerowej pozycji
-	EN_OFF;
-	_delay_ms(15);
-
-	RS_ON;
-
-		/*RS_OFF;
+		RS_OFF;
 		EN_ON;
-		PORTB=0x40;
-		for(i=0;i<7;i++)
-		{	EN_ON;
-			PORTB = L[i]; //TUTAJ
-			EN_OFF;
+		PORTB=0x02; //kursora na zerowej pozycji
+		EN_OFF;
 		_delay_ms(15);
-		}*/
 
+		 //przes(6);//wysrodkowuje przez dodanie przerwy
+
+		RS_OFF;
+		EN_ON;
+		zdefiniuj_znak(0, L);
+		EN_OFF;
+		_delay_ms(15);
+
+
+
+		RS_OFF;
+		EN_ON;
+		PORTB=0x02; //kursora na zerowej pozycji
 		EN_OFF;
 		_delay_ms(15);
 
 		if(!(PIND&(1<<0)))
 		{
 			status=1;
-			//animacja();
+			animacja();
 		}
 
-		/*switch(status)
+		switch(status)
 		{
 			case 0:
-			//LED2_ON;
-			RS_OFF;
-			EN_ON;
-			PORTB=0x01; //czyszcznie ekranu
-			EN_OFF;
-			_delay_ms(15);
+
+				LED2_ON;
+				RS_OFF;
+				EN_ON;
+				PORTB=0x01; //czyszcznie ekranu
+				EN_OFF;
+				_delay_ms(15);
 
 			break;
 
 			case 1:
-			//animacja();
-			break;
 
-		}*/
+				animacja();
 
+				break;
+
+		}
 	}
 }
 
-/*animacja()
+animacja()
 {
-
 	RS_OFF;
 	EN_ON;
 	PORTB=0x02; //kursora na zerowej pozycji
@@ -204,46 +205,42 @@ int main(){
 
 	przes(6);//wysrodkowuje przez dodanie przerwy
 
-	for(int indeks=0; indeks<3; indeks++)
-	{
-		EN_ON;
-		PORTB = Lit_a[indeks];
-		//PortB=0x41;
-		EN_OFF;
-		_delay_ms(15);
-
-	}
+		for(int indeks=0; indeks<3; indeks++)
+		{
+			EN_ON;
+			PORTB = Lit_a[indeks];
+			EN_OFF;
+			_delay_ms(15);
+		}
 
 	RS_OFF;
 	EN_ON;
 	PORTB=0xC0; //kursora na zerowej pozycji
 	EN_OFF;
 	_delay_ms(15);
-
 	//Wyswietlanie znaku
 	//poz kursora zero, pierwsza linia wyswietlacza
 
 
 
 
-	//wysylanie komendy sterujacej (adres kursora)
-	// poz 0 druga linia
+			//wysylanie komendy sterujacej (adres kursora)
+			// poz 0 druga linia
 
 	RS_ON;
 	przes(4);//wysrodkowuje przez dodanie przerwy
 
-	for(int indeks=0; indeks<8; indeks++)
-	{
-
-		EN_ON;
-		PORTB = Lit_b[indeks];
-		//PortB=0x41;
-		EN_OFF;
-		_delay_ms(15);
-	}
+		for(int indeks=0; indeks<8; indeks++)
+		{
+			EN_ON;
+			PORTB = Lit_b[indeks];
+			//PortB=0x41;
+			EN_OFF;
+			_delay_ms(15);
+		}
 
 
 	//while(1);
 
 }
-*/
+
