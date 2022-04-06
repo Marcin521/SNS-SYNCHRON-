@@ -1,0 +1,67 @@
+/*
+ * Przetwornik AC.c
+ *
+ * Created: 06.04.2022 11:21:12
+ * Author : Kacper Romanowski 
+ */ 
+
+
+#define F_CPU 16000000UL
+volatile unsigned int licznik = 0;
+volatile unsigned char wynik;
+
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+
+void Port_init(void)
+{
+	DDRA = 0x00;
+	PORTA = 0xFF;
+	DDRB = 0XFF;
+	PORTB = 0xFF;
+	DDRD = 0xF0;
+	PORTD = 0xFF;
+}
+
+void ac_init(void)
+{
+	ADCSRA = (1<<ADEN) // ADEN: ADC Enable - uruchomienie
+	|(1<<ADPS0)    //ADPS2:0: ustawienie preskalera na 128
+	|(1<<ADPS1)
+	|(1<<ADPS2)
+	|(1<<ADIE); //właczenie przerwania od A/C 
+	
+	ADMUX = 0x00;
+	ADMUX = (1<<REFS0) | (1<<ADLAR) | (1<<0); // | (1<<MUX1);
+}
+
+ISR(ADC_vect)
+{
+	wynik = ADCH;
+	PORTB = ~wynik; 
+}
+
+
+int main(void)
+{
+    Port_init();
+	ac_init();
+	sei();
+    while (1) 
+    {
+		ADCSRA |= (1<<ADSC);   //ADSC: uruchomienie poje
+		while(ADCSRA & (1<<ADSC));   //czeka na zakończenie ko
+		
+		/*if (P1_Pin)
+		{
+			LED_1_ON;
+		}
+		if (P2_Pin)
+		{
+			LED_1_OFF;
+		}*/
+    }
+}
+
+
