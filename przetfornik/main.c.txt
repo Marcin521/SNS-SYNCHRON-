@@ -1,5 +1,5 @@
 
-// 29.03.2022
+// 2.05.2022
 //autor: Marcin Kondoł
 
 
@@ -8,6 +8,8 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include  <avr/interrupt.h> //biblioteka dodająca przerwania
+#include <stdio.h> 
+
 
 #define LCD_Data_Dir DDRB
 #define LCD_Command_Dir DDRC
@@ -130,10 +132,38 @@ void LCD_Def_Znak_Char (unsigned char loc, unsigned char *msg)
 	}
 }
 
+void ac_init(void)
+{
+	//wybór VCC na napięcie odniesienia
+	ADMUX |= (1<<REFS0);
+	//włączenie modułu ADC, preskaler 64
+	ADCSRA = (1<<ADEN)|(1<<ADPS1)|(1<<ADPS0);
+}
+
+uint16_t pomiar(uint16_t kanal)
+{
+	//ustawienie wybranego kanalu w rejestrze ADMUX
+	ADMUX = (ADMUX & 0xF8) | kanal;
+	//Start pomiaru
+	ADCSRA |= (1<<ADSC);
+	//oczekiwanie
+	while(ADCSRA & (1<<ADSC));
+	return ADCW;
+}
+
+
 
 int main()
 {
-	char i;
+
+    ac_init();
+
+    uint32_t pm;
+    uint8_t cz_d, cz_u;
+    uint32_t wynik;
+
+
+    char i;
 	LED_ON;
 	LED2_OFF;
 
@@ -145,8 +175,8 @@ int main()
 	unsigned char Character6[8] = { 0x0A, 0x0A, 0x1F, 0x11, 0x11, 0x0E, 0x04, 0x04 };
 	unsigned char Character7[8] = { 0x00, 0x00, 0x0A, 0x00, 0x04, 0x11, 0x0E, 0x00 };
 	unsigned char Character8[8] = { 0x00, 0x0A, 0x1F, 0x1F, 0x0E, 0x04, 0x00, 0x00 };
-		unsigned char Character5[8] = { 0x00, 0x00, 0x0E, 0x11, 0x1F, 0x10, 0x0E, 0x04}; //ę
-	
+	unsigned char Character5[8] = {  0x00, 0x00, 0x0E, 0x11, 0x1F, 0x10, 0x0E, 0x04}; //ę
+
 
 	LCD_Init();
 
@@ -159,6 +189,7 @@ int main()
 	LCD_Def_Znak_Char(5, Character6);
 	LCD_Def_Znak_Char(6, Character7);
 	LCD_Def_Znak_Char(7, Character8);
+
 	while(1)
 	{
 		switch(status)
@@ -168,36 +199,42 @@ int main()
 			break;
 
 			case 1:
+
+			pm = pomiar(5);
+			wynik = pm * 25UL * 13UL;
+			cz_d = wynik/10000;
+			cz_u = (wynik/100) % 100;
+
 			LCD_Command(0x80);		//startowa pozycja kursora
 			LCD_String("Pomiar napi");
-				
-						//drukowanie zdefiniowanych liter/obrazkow
-			
+
+				//drukowanie zdefiniowanych liter/obrazkow
+
+
 				LCD_Char(4);
-				
-				
+
+
 				LCD_Command(0xc);
 				LCD_String("cia");
-			
+
 
 			//break;
-			LCD_Command(0xc0);
-			
+		//	LCD_Command(0xc0);
+
 			LCD_Command(0xc2);
 			LCD_String("U = ");
 			LCD_Command(0xc0);
-			
+
+			LCD_Command(0xc6);
+			LCD_String(cz_d);
+			LCD_String(".");
+			LCD_String(cz_u);
+
+
 			LCD_Command(0xca);
 			LCD_String("[V]");
 			LCD_Command(0xc0);
 
-		//	for(i=0;i<8;i++)		//drukowanie zdefiniowanych liter/obrazkow
-			//{
-				//LCD_Char(i);
-			//LCD_Char(' ');
-			//}
-
-			//break;
 
 		}
 	}
