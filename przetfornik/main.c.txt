@@ -76,6 +76,10 @@ void LCD_Init (void) //inicjalizacja
 	PORTC=0xFF;
 	DDRD=0xF0;
 	PORTD=0xFF;
+	
+	DDRA = 0x00;
+	PORTA = 0xFF;
+	
 	//definicja przerwan
 
 	GICR|= 1<<INT0 | 1<<INT1;
@@ -143,12 +147,12 @@ void ac_init(void)
 uint16_t pomiar(uint16_t kanal)
 {
 	//ustawienie wybranego kanalu w rejestrze ADMUX
-	ADMUX = (ADMUX & 0xF8) | kanal;
+	//ADMUX =  0x00;
 	//Start pomiaru
 	ADCSRA |= (1<<ADSC);
 	//oczekiwanie
 	while(ADCSRA & (1<<ADSC));
-	return ADCW;
+	return ADC;
 }
 
 
@@ -158,15 +162,17 @@ int main()
 
     ac_init();
 
-    uint32_t pm;
     uint8_t cz_d, cz_u;
-    uint32_t wynik;
+    double wynik,pm;
 
 
     char i;
 	LED_ON;
 	LED2_OFF;
-
+	char acpomiar[16];
+	unsigned char acpomiard[3];
+	
+	
 	unsigned char Character1[8] = { 0x00, 0x0A, 0x15, 0x11, 0x0A, 0x04, 0x00, 0x00 };
 	unsigned char Character2[8] = { 0x04, 0x1F, 0x11, 0x11, 0x1F, 0x1F, 0x1F, 0x1F };
 	unsigned char Character3[8] = { 0x10, 0x10, 0x12, 0x14, 0x18, 0x10, 0x1F, 0x01}; //Ł
@@ -201,9 +207,10 @@ int main()
 			case 1:
 
 			pm = pomiar(5);
-			wynik = pm * 25UL * 13UL;
-			cz_d = wynik/10000;
-			cz_u = (wynik/100) % 100;
+			wynik = ((pm*5.0f)/1023.0f);
+			sprintf(acpomiar, "%1.2f", wynik);
+			//cz_d = (wynik/10000) + 1e;
+			//cz_u = ((wynik/100) % 100 ) + 1e;
 
 			LCD_Command(0x80);		//startowa pozycja kursora
 			LCD_String("Pomiar napi");
@@ -226,9 +233,9 @@ int main()
 			LCD_Command(0xc0);
 
 			LCD_Command(0xc6);
-			LCD_String(cz_d);
-			LCD_String(".");
-			LCD_String(cz_u);
+			LCD_String(acpomiar);
+			//LCD_String(".");
+		
 
 
 			LCD_Command(0xca);
