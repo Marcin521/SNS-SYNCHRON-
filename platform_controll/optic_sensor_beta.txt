@@ -86,26 +86,22 @@ int main(void)
 
 		sei();
 
-	ac_init();
-	double pm;
-	double wynik;
+		ac_init();
 
 
 
 
      while(1)
      {
-    	 pm = pomiar(5);
-    	 wynik = ((pm*5.0f)/1023.0f);
-    	 sprintf(pomiar, "%1.2f", wynik);
 
-    	 if(wynik>1.5f)
+
+
+    	 if (pomiar(5)>307)
     	 {
-    		 LED_ON;
-    		 _delay_ms(500);
+    	     LED_ON;
+    	     _delay_ms(500);
     	 }
     	 else LED_OFF;
-
 
     	 /*switch(odebrano)
     	 	{
