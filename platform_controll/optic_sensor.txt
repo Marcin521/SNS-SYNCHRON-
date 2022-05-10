@@ -22,7 +22,26 @@
 #define M2_Stop   PORTA &= ~0b01100000
 
 
-volatile uint8_t odebrano;
+volatile uint8_t odebrano, licz;
+uint16_t pomiar(uint16_t kanal);
+
+ISR (TIMER1_OVF_vect)
+{
+
+	if (licz) licz--; else
+	{
+		licz=25;
+		PORTD ^= 0b00010000;
+	}
+
+	 if (pomiar(6)>307)
+   	 {
+   	     LED_ON;
+   	     _delay_ms(500);
+   	 }
+   	 else LED_OFF;
+
+}
 
 ISR (USART0_RX_vect)
 {
@@ -36,19 +55,11 @@ ISR (USART0_RX_vect)
      }
 }
 
-void ac_init(void)
-{
-	//wybór VCC na napięcie odniesienia
-	ADMUX |= (1<<REFS0);
-	//włączenie modułu ADC, preskaler 64
-	ADCSRA = (1<<ADEN)|(1<<ADPS1)|(1<<ADPS0);
-}
-
 uint16_t pomiar(uint16_t kanal)
 {
 
-	//Start pomiaru
-	ADCSRA |= (1<<ADSC);
+	ADMUX = 0b01000000 | kanal;
+	ADCSRA = 0b11000111;
 	//oczekiwanie
 	while(ADCSRA & (1<<ADSC));
 	return ADC;
@@ -59,15 +70,14 @@ int main(void)
 {
 
 
-	  DDRF=0xff;                      //Nieużywane Piny na porcie C jako wyjścia
-	  DDRF &=~ (1<<PF5);  //Ustawienie Wejścia ADC
+	    DDRF=0b00000000;                      //Nieużywane Piny na porcie C jako wyjścia
+
 
 		DDRG = 0b00001000;	//PG3 OUT
 		DDRA = 0b01111000;
 		DDRE = 0b00011000;
-
 		PORTE = 0b00000000;
-
+		DDRD = 0b00010000;
 		DDRC = (1<<7);
 
 		TCCR3A = 0b11110010;
@@ -75,6 +85,11 @@ int main(void)
 		ICR3 = 2000;
 		OCR3A = 500;
 		OCR3B = 500;
+
+		TCCR1A = 0b00000010;
+		TCCR1B = 0b00011010;	//CLK 1/8
+		ICR1 = 40000;
+		TIMSK = 0b00000100;
 
 		ENA_ON;
 
@@ -86,7 +101,6 @@ int main(void)
 
 		sei();
 
-		ac_init();
 
 
 
@@ -96,12 +110,6 @@ int main(void)
 
 
 
-    	 if (pomiar(5)>307)
-    	 {
-    	     LED_ON;
-    	     _delay_ms(500);
-    	 }
-    	 else LED_OFF;
 
     	 /*switch(odebrano)
     	 	{
