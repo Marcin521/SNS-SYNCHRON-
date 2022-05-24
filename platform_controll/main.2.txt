@@ -32,6 +32,10 @@ ISR (TIMER1_OVF_vect)
 	{
 		licz=25;
 		PORTD ^= 0b00010000;
+
+
+
+
 	}
 
 	 if (pomiar(6)>307) // funkcja testowa
@@ -41,10 +45,10 @@ ISR (TIMER1_OVF_vect)
 
 
    	     LED_ON;
-   	     _delay_ms(500); // zastanów się nad delayem w przerwaniu jak go można zastąpic
    	 }
    	 else LED_OFF;
-
+	 uint16_t pwm = pomiar(7);
+	 OCR1A = 954+pwm*4;
 }
 
 ISR (USART0_RX_vect)
@@ -84,6 +88,7 @@ int main(void)
 	PORTE = 0b00000000;
 	DDRD = 0b00010000;
 	DDRC = (1<<7);
+	DDRB = 0b00100000;
 
 	TCCR3A = 0b11110010;
 	TCCR3B = 0b00011010;	//CLK 1/64
@@ -91,11 +96,12 @@ int main(void)
 	OCR3A = 500;
 	OCR3B = 500;
 
-	TCCR1A = 0b00000010;
+	TCCR1A = 0b10000010;
 	TCCR1B = 0b00011010;	//CLK 1/8
 	ICR1 = 40000;
 	TIMSK = 0b00000100;
-
+	OCR1A = 3000; //1.5ms
+	//zakres: OCR1A = (1000...5000) -> 0.5ms...2.5ms -> 0...180deg
 	ENA_ON;
 
 	//Ustawienia UARTa
