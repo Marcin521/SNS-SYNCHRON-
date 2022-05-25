@@ -1,0 +1,87 @@
+/*
+ * GccApplication2T.c
+ *
+ * Created: 04.05.2022 12:30:43
+ * Author : student
+ */ 
+#define  F_CPU 16000000UL
+#include <avr/io.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+//#include <studio.h>
+//#include <stdlib.h>
+
+
+void port_init(void)
+	
+	{
+		DDRB  = 0xFF;
+		PORTB = 0xFF;
+		DDRD = 0xF0;
+		PORTD = 0xFF;
+
+		#define P1_Pin ! (PIND&(1<<0));
+		#define P2_Pin ! (PIND&(1<<1));
+		#define P3_Pin ! (PIND&(1<<2));
+		#define P4_Pin ! (PIND&(1<<3));
+		/*#define LED_1_ON PORTD^=(1<<);
+		#define LED_1_OFF PORTD^=(1<<);
+		#define LED_2_ON PORTD^=(1<<);
+		#define LED_2_OFF PORTD^=(1<<);
+		#define LED_1_Blink PORTD^=(1<<5);*/
+		#define LED_2_Blink PORTD^=(1<<6);
+	}
+void timer_init(void)
+
+	{								
+		
+		TCCR1A = 
+		
+		
+		(1<<COM1A1)
+		|(1<<COM1A0)
+		|(1<<WGM11);
+
+		OCR1A = 185;	
+		
+			
+		ICR1 = 248;
+		
+		TCCR1B =
+			
+		(1<<WGM12)
+		|(1<<WGM13)
+	
+		|(1<<CS10)
+		|(1<<CS11)
+		|(0<<CS12);  
+		
+	
+		
+		
+	}
+	
+
+	
+ISR(TIMER1_OVF_vect)
+
+	{
+		TCNT1 = 0;
+	
+		
+		
+
+
+	}
+	
+
+int main(void)
+{
+    port_init();
+	timer_init();
+	
+	
+	sei();
+    while (1); 
+}
+
