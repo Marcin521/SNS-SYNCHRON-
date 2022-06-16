@@ -182,6 +182,10 @@ ISR(INT1_vect){
 
 int main()
 {
+	GICR|= 1<<INT0 | 1<<INT1 ;
+	sei();//WLACZENIE PRZERWAN
+
+	
 	uint8_t cz_d, cz_u;
 	double wynik,pm;
 	
@@ -208,13 +212,12 @@ int main()
 	LCD_Def_Znak_Char(5, Character6);
 	LCD_Def_Znak_Char(6, Character7);
 	LCD_Def_Znak_Char(7, Character8);
+		
 	
-	
-	
-	GICR|= 1<<INT0 | 1<<INT1 ;
-	sei();//WLACZENIE PRZERWAN
 
 	LCD_Init();
+	
+	
 
 
 	while(1)
@@ -227,6 +230,8 @@ int main()
 			break;
 			
 			case 1:
+			
+				timer_init();
 			
 				pm = pomiar(5);
 				//pomiar przelizny na stopnie
