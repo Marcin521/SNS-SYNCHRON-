@@ -62,9 +62,6 @@ void LCD_Init (void) //inicjalizacja
 
 	//definicja przerwan
 
-	GICR|= 1<<INT0 | 1<<INT1;
-	//włączenie przerwań
-	sei();
 
 	LCD_Command_Dir = 0xFF;		/* Make LCD command port direction as o/p */
 	LCD_Data_Dir = 0xFF;		/* Make LCD data port direction as o/p */
@@ -139,12 +136,15 @@ void timer_init(void)
 	|(1<<COM1A0)
 	|(1<<WGM11);
 
-	uint16_t pwm;
-	pwm=pomiar(5);
-	OCR1A = 2000+pwm*50;	
-
 	ICR1 = 40000;
+	
+	uint16_t pwm=pomiar(5);
+	OCR1A = 954+pwm*4;
+	
 
+	
+
+	
 	TCCR1B = (1<<WGM12)//CLK 1/8
 	|(1<<WGM13)
 	|(0<<CS10)
@@ -171,11 +171,11 @@ ISR(INT1_vect){
 	status=0;
 	
 	LCD_Clear();
-	LCD_Command(0x80);		//startowa pozycja kursora
-	LCD_String("      STOP      ");
+	LCD_Command(0x84);		//startowa pozycja kursora
+	LCD_String("PROGRAM");
 	
-	LCD_Command(0xc0);		//startowa pozycja kursora dolny wiersz
-	LCD_String("      STOP      ");
+	LCD_Command(0xc3);		//startowa pozycja kursora dolny wiersz
+	LCD_String("ZATRZYMANY");
 	
 }
 
@@ -185,23 +185,21 @@ int main()
 	GICR|= 1<<INT0 | 1<<INT1 ;
 	sei();//WLACZENIE PRZERWAN
 
-	
-	uint8_t cz_d, cz_u;
 	double wynik,pm;
 	
 	unsigned char acpomiard[3];
-	char acpomiar[16];	
+	char acpomiar[16];
 
 
 	unsigned char Character1[8] = { 0x00, 0x0A, 0x15, 0x11, 0x0A, 0x04, 0x00, 0x00 };
 	unsigned char Character2[8] = { 0x04, 0x1F, 0x11, 0x11, 0x1F, 0x1F, 0x1F, 0x1F };
-	unsigned char Character3[8] = { 0x10, 0x10, 0x12, 0x14, 0x18, 0x10, 0x1F, 0x01}; //Ł
-	unsigned char Character4[8] = { 0x01, 0x03, 0x07, 0x1F, 0x1F, 0x07, 0x03, 0x01 };
-	//	unsigned char Character5[8] = { 0x01, 0x03, 0x05, 0x09, 0x09, 0x0B, 0x1B, 0x18 };
-	unsigned char Character6[8] = { 0x0A, 0x0A, 0x1F, 0x11, 0x11, 0x0E, 0x04, 0x04 };
-	unsigned char Character7[8] = { 0x00, 0x00, 0x0A, 0x00, 0x04, 0x11, 0x0E, 0x00 };
-	unsigned char Character8[8] = { 0x00, 0x0A, 0x1F, 0x1F, 0x0E, 0x04, 0x00, 0x00 };
-	unsigned char Character5[8] = {  0x00, 0x00, 0x0E, 0x11, 0x1F, 0x10, 0x0E, 0x04}; //ę
+	unsigned char Character3[8] = { 0x10, 0x10, 0x12, 0x14, 0x18, 0x10, 0x1F, 0x01 }; //Ł
+	unsigned char Character4[8] = { 0x00, 0x00, 0x00, 0x0d, 0x12, 0x12, 0x0f, 0x00 };//alfa
+	unsigned char Character5[8] = { 0x00, 0x00, 0x0E, 0x11, 0x1F, 0x10, 0x0E, 0x04 }; //ę
+	unsigned char Character6[8] = { 0x00, 0x0c, 0x12, 0x12, 0x0c, 0x00, 0x00, 0x00 };//deg
+	unsigned char Character7[8] = { 0x04, 0x04, 0x06, 0x0c, 0x04, 0x04, 0x04, 0x00 }; //ł
+	unsigned char Character8[8] = { 0x04, 0x00, 0x1f, 0x02, 0x04, 0x08, 0x1f, 0x00 }; //ż
+
 	
 
 	LCD_Def_Znak_Char(0, Character1);
@@ -212,7 +210,7 @@ int main()
 	LCD_Def_Znak_Char(5, Character6);
 	LCD_Def_Znak_Char(6, Character7);
 	LCD_Def_Znak_Char(7, Character8);
-		
+	
 	
 
 	LCD_Init();
@@ -222,11 +220,11 @@ int main()
 
 	while(1)
 	{
-				
+		
 		switch(status)
 		{
 			case 0:
-				ICR1 = 0;
+			ICR1 = 0;
 			break;
 			
 			case 1:
@@ -238,27 +236,32 @@ int main()
 				wynik = (((pm*5.0f)/1023.0f)*36.0f);
 				sprintf(acpomiar, "%1.2f", wynik);
 
-				LCD_Command(0x80);		//startowa pozycja kursora
-				LCD_String("Pomiar Napi");
+				LCD_Command(0x84);		//startowa pozycja kursora
+				LCD_String("Po");
 
 				//drukowanie zdefiniowanych liter/obrazkow
 
-				LCD_Char(4);
-
-				LCD_Command(0xc);
-				LCD_String("cia");
+				LCD_Char(6);
+				LCD_String("o");
+				LCD_Char(7);
+				LCD_String("enie");
 			
 			
 				LCD_Command(0xc2);
-				LCD_String("a = ");
+				LCD_Char(3);
+				LCD_String(" = ");
 				LCD_Command(0xc0);
 
 				LCD_Command(0xc6);
 				LCD_String(acpomiar);
 
-				LCD_Command(0xca);
-				LCD_String("[st]");
+				LCD_Command(0xcc);
+				LCD_String("[");
+				LCD_Char(5);
+				LCD_String("]");
 				LCD_Command(0xc0);
+			
+			
 
 			
 		}
