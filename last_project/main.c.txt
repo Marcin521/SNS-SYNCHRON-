@@ -136,12 +136,11 @@ void timer_init(void)
 	|(1<<COM1A0)
 	|(1<<WGM11);
 
-	ICR1 = 40000;
-	
-	uint16_t pwm=pomiar(5);
-	OCR1A = 954+pwm*4;
-	
+	uint16_t pwm;
+	pwm=pomiar(5);
+	OCR1A = 2000+pwm*50;
 
+	ICR1 = 40000;
 	
 
 	
