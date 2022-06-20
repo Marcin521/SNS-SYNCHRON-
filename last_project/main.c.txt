@@ -7,7 +7,7 @@
 #define F_CPU 16000000UL
 #include <avr/io.h>
 #include <util/delay.h>
-#include  <avr/interrupt.h> //biblioteka dodająca przerwania
+#include <avr/interrupt.h> //biblioteka dodająca przerwania
 #include <stdio.h>
 
 
@@ -132,13 +132,11 @@ uint16_t pomiar(uint16_t kanal)
 void timer_init(void)
 {
 
-	TCCR1A = (1<<COM1A1)
-	|(1<<COM1A0)
-	|(1<<WGM11);
-
+	TCCR1A = (1<<COM1A1);
+	
 	uint16_t pwm;
 	pwm=pomiar(5);
-	OCR1A = 2000+pwm*50;
+	OCR1A=2000+pwm*(2000/1023);
 
 	ICR1 = 40000;
 	
@@ -169,6 +167,8 @@ ISR(INT0_vect){
 ISR(INT1_vect){
 	status=0;
 	
+	ICR1=0;
+		
 	LCD_Clear();
 	LCD_Command(0x84);		//startowa pozycja kursora
 	LCD_String("PROGRAM");
@@ -223,7 +223,7 @@ int main()
 		switch(status)
 		{
 			case 0:
-			ICR1 = 0;
+
 			break;
 			
 			case 1:
